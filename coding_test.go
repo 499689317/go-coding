@@ -19,8 +19,12 @@ func TestCoding(t *testing.T) {
 	if e != nil {
 		t.Error(e)
 	}
+	
+	tbuf := make([]byte, len(buf))
+	copy(tbuf, buf)
+	copy(tbuf, []byte(str))
 
-	l2, e := c.Redecode(buf)
+	l2, e := c.Redecode(tbuf)
 	if e != nil {
 		t.Error(e)
 	}
@@ -36,8 +40,6 @@ func TestCoding(t *testing.T) {
 		Server: 2,
 		Body: []byte(str2),
 	}
-
-	
 
 	buf2, e := c.Encode(m2)
 	if e != nil {

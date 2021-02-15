@@ -53,8 +53,7 @@ func (c *Coding) Encode(msg Messager) ([]byte, error) {
 // 解码
 func (c *Coding) Redecode(bytes []byte) ([]Messager, error) {
 	ms := []Messager{}
-	l := len(c.bytes)
-	b := len(bytes)
+	l, b := len(c.bytes), len(bytes)
 	bs := make([]byte, l+b)
 	copy(bs, c.bytes)
 	copy(bs[l:], bytes)
@@ -64,8 +63,8 @@ func (c *Coding) Redecode(bytes []byte) ([]Messager, error) {
 		m, e := c.Decode(c.bytes)
 		if e != nil {
 			fmt.Println(e)
-			// 丢弃掉错误数据
-			c.bytes = bytes
+			// 丢弃掉上一次的错误数据
+			c.bytes = nil
 			break
 		}
 		if m == nil {
@@ -86,7 +85,10 @@ func (c *Coding) Decode(bytes []byte) (Messager, error) {
 	if e != nil {
 		return nil, e
 	}
-	// 判断是不是完整的消息
+	if b > 2048 || l > 2048 {
+		return nil, errors.New("body size error")
+	}
+	// 判断是不是完整的消息，数据错乱有可能会导至一直解析错误
 	if l < HEADER_LEN + int(b) {
 		return nil, nil
 	}
