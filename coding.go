@@ -3,7 +3,7 @@ package coding
 import (
 	"errors"
 	"time"
-	//"fmt"
+	"fmt"
 )
 
 type Coding struct {
@@ -60,7 +60,7 @@ func (c *Coding) Redecode(bytes []byte) ([]Messager, error) {
 	copy(bs[l:], bytes)
 	c.bytes = bs
 	for {
-		//fmt.Println(c.bytes)
+		fmt.Println(c.bytes)
 		m, e := c.Decode(c.bytes)
 		if e != nil {
 			break
