@@ -6,7 +6,7 @@ import (
 	"encoding/binary"
 )
 
-const MAX_CAP = 1024
+const MAX_CAP = 128
 
 type Writer struct {
 	cursor int
@@ -19,6 +19,9 @@ func NewWriter() *Writer {
 	return &Writer{0, make([]byte, MAX_CAP)}
 }
 
+func (w *Writer) ResetCursor() {
+	w.cursor = 0
+}
 // 未使用空间长度
 func (w *Writer) UnwriteLen() int {
 	if len(w.bytes) <= w.cursor {
@@ -48,7 +51,7 @@ func (w *Writer) Write(buf []byte) (int, error) {
 	l := len(buf)
 	wl := w.UnwriteLen()
 	if wl < l {
-		w.apply(l - wl)
+		w.apply(l-wl)
 	}
 	n := copy(w.bytes[w.cursor:], buf)
 	w.cursor += n
@@ -59,20 +62,20 @@ func (w *Writer) WriteString(s string) (int, error) {
 	return w.Write(*(*[]byte)(unsafe.Pointer(&s)))
 }
 
-func (w *Writer) WriteInt16(n int16) (int, error) {
+func (w *Writer) WriteUint16(n uint16) (int, error) {
 	buf := make([]byte, 8)
 	binary.LittleEndian.PutUint64(buf, uint64(n))
 	return w.Write(buf[:2])
 }
 
-func (w *Writer) WriteInt32(n int32) (int, error) {
+func (w *Writer) WriteUint32(n uint32) (int, error) {
 	buf := make([]byte, 8)
 	binary.LittleEndian.PutUint64(buf, uint64(n))
 	return w.Write(buf[:4])
 }
 
-func (w *Writer) WriteInt64(n int64) (int, error) {
+func (w *Writer) WriteUint64(n uint64) (int, error) {
 	buf := make([]byte, 8)
-	binary.LittleEndian.PutUint64(buf, uint64(n))
+	binary.LittleEndian.PutUint64(buf, n)
 	return w.Write(buf)
 }
