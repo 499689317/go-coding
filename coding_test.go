@@ -14,6 +14,22 @@ func TestCoding(t *testing.T) {
 		Body: []byte(str),
 	}
 
+	// 编码
+	buf, e := c.Encode(m)
+	if e != nil {
+		t.Error(e)
+	}
+
+	l2, e := c.Redecode(buf)
+	if e != nil {
+		t.Error(e)
+	}
+	for _, d := range l2 {
+		t.Log("l2: ", d.(*Message).Size, d.(*Message).Version, d.(*Message).Server, d.(*Message).TimeStamp, d.(*Message).Body)
+	}
+	
+	t.Log("coding byte", c.Bytes())
+
 	str2 := "iiiisssssssssssssssssssssssssssssssssssssssssssss"
 	m2 := &Message{
 		Version: 2,
@@ -21,11 +37,7 @@ func TestCoding(t *testing.T) {
 		Body: []byte(str2),
 	}
 
-	// 编码
-	buf, e := c.Encode(m)
-	if e != nil {
-		t.Error(e)
-	}
+	
 
 	buf2, e := c.Encode(m2)
 	if e != nil {
@@ -45,4 +57,6 @@ func TestCoding(t *testing.T) {
 		v := d.(*Message)
 		t.Log("Size: ", v.Size, "Version: ", v.Version, "Server: ", v.Server, "TimeStamp: ", v.TimeStamp, "Body: ", v.Body)
 	}
+
+	t.Log("coding byte: ", c.Bytes())
 }

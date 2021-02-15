@@ -3,6 +3,7 @@ package coding
 import (
 	"errors"
 	"time"
+	//"fmt"
 )
 
 type Coding struct {
@@ -28,6 +29,10 @@ func (c *Coding) toMessage(msg Messager) *Message {
 	return nil
 }
 
+func (c *Coding) Bytes() []byte {
+	return c.bytes
+}
+
 // 编码
 func (c *Coding) Encode(msg Messager) ([]byte, error) {
 	m := c.toMessage(msg)
@@ -50,9 +55,12 @@ func (c *Coding) Redecode(bytes []byte) ([]Messager, error) {
 	ms := []Messager{}
 	l := len(c.bytes)
 	b := len(bytes)
-	c.bytes = make([]byte, l + b)
-	copy(c.bytes[l:], bytes)
+	bs := make([]byte, l+b)
+	copy(bs, c.bytes)
+	copy(bs[l:], bytes)
+	c.bytes = bs
 	for {
+		//fmt.Println(c.bytes)
 		m, e := c.Decode(c.bytes)
 		if e != nil {
 			break
