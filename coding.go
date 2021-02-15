@@ -60,9 +60,12 @@ func (c *Coding) Redecode(bytes []byte) ([]Messager, error) {
 	copy(bs[l:], bytes)
 	c.bytes = bs
 	for {
-		fmt.Println(c.bytes)
+		//fmt.Println(c.bytes)
 		m, e := c.Decode(c.bytes)
 		if e != nil {
+			fmt.Println(e)
+			// 丢弃掉错误数据
+			c.bytes = bytes
 			break
 		}
 		if m == nil {
